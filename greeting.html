@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Slow Reveal Thank You</title>
+    <style>
+        body {
+            margin: 0;
+            background: radial-gradient(circle at center, #0f172a 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Arial Black', sans-serif;
+            color: white;
+        }
+
+        /* COUNTDOWN STYLING */
+        #countdown {
+            font-size: 15rem;
+            position: absolute;
+            opacity: 0;
+            text-shadow: 0 0 20px rgba(0, 210, 255, 0.8);
+        }
+
+        .number-animation {
+            animation: popAndFade 1s ease-out forwards;
+        }
+
+        @keyframes popAndFade {
+            0% { opacity: 1; transform: scale(1.5); filter: blur(0px); }
+            100% { opacity: 0; transform: scale(0.5); filter: blur(10px); }
+        }
+
+        /* THANK YOU STYLING */
+        .container {
+            text-align: center;
+            display: none; 
+        }
+
+        .char {
+            display: inline-block;
+            font-size: clamp(3.5rem, 12vw, 8rem);
+            font-weight: 900;
+            opacity: 0;
+            /* Starts a bit smaller and lower */
+            transform: scale(0.8) translateY(30px);
+            /* Keep the slow speed (2.0s) and smooth timing */
+            animation: cleanSlowReveal 2.0s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+        }
+
+        /* NEW CLEAN REVEAL ANIMATION (Reduced Blur) */
+        @keyframes cleanSlowReveal {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.8) translateY(30px); 
+                /* CHANGED: Initial blur reduced from 20px to just 4px */
+                filter: blur(4px); 
+            }
+            30% {
+                /* Make the text visible quicker so it doesn't spend too long blurry */
+                opacity: 0.8;
+                filter: blur(2px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1) translateY(0); 
+                filter: blur(0px); 
+                /* Subtle, crisp text glow at the end */
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            }
+        }
+
+        .space { display: inline-block; width: 3rem; }
+    </style>
+</head>
+<body>
+
+    <div id="countdown"></div>
+    <div class="container" id="text-container">Fuck You</div>
+
+    <script>
+        const countdownEl = document.getElementById('countdown');
+        const container = document.getElementById('text-container');
+        const numbers = ['3', '2', '1'];
+        let countIndex = 0;
+
+        const colors = ['#00d2ff', '#3a7bd5', '#00f2fe', '#736efe', '#5eead4', '#ffffff'];
+
+        function runCountdown() {
+            if (countIndex < numbers.length) {
+                countdownEl.innerText = numbers[countIndex];
+                countdownEl.classList.remove('number-animation');
+                void countdownEl.offsetWidth; 
+                countdownEl.classList.add('number-animation');
+                countIndex++;
+                setTimeout(runCountdown, 1000); 
+            } else {
+                countdownEl.style.display = 'none';
+                startMainText();
+            }
+        }
+
+        function startMainText() {
+            container.style.display = 'block';
+            const text = container.innerText;
+            container.innerHTML = '';
+
+            text.split('').forEach((letter, index) => {
+                const span = document.createElement('span');
+                if (letter === ' ') {
+                    span.className = 'space';
+                } else {
+                    span.className = 'char';
+                    span.innerText = letter;
+                    const color = colors[index % colors.length];
+                    span.style.color = color;
+                    
+                    /* The 0.3s delay per letter remains for that slow effect */
+                    span.style.animationDelay = `${index * 0.3}s`;
+                }
+                container.appendChild(span);
+            });
+        }
+
+        runCountdown();
+    </script>
+</body>
+</html>
